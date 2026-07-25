@@ -1,0 +1,5 @@
+export const NOTIFICATION_EVENTS = [
+    "PAYMENT_SUCCESS",
+    "PAYMENT_FAILED",
+    "ORDER_CANCELLED"
+];
