@@ -1,0 +1,34 @@
+# Node/npm
+node_modules/
+**/node_modules/
+
+# envs
+.env
+**/.env
+
+# generated / tool output
+/generated/
+**/generated/
+**/generated/prisma
+**/.agents/
+**/.claude/
+**/.windsurf/
+
+# build / cache
+dist/
+build/
+coverage/
+.cache/
+.turbo/
+.vscode/
+.DS_Store
+
+# Lockfiles
+package-lock.json
+pnpm-lock.yaml
+
+# Logs
+*.log
+
+# OS
+Thumbs.db

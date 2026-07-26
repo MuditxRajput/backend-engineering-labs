@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+enum NotificationStatus {
+  PENDING
+  PROCESSING
+  SENT
+  FAILED
+}
+enum NotificationChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+enum NotificationEvent {
+  PAYMENT_SUCCESS
+  PAYMENT_FAILED
+  ONBOARDING_WELCOME
+  FORGET_PASSWORD
+  RESET_PASSWORD
+  ORDER_INVOICE
+  ORDER_PLACED
+  ORDER_CANCELLED
+  ORDER_DELAYED
+}
+model Notification{
+  id Int @id @default(autoincrement())
+  userId Int
+  recipient String
+  event NotificationEvent
+  status NotificationStatus @default(PENDING)
+  orderId Int?
+  channel NotificationChannel
+  payload Json?
+  errorMessage String?
+  sentAt  DateTime ?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId,event,orderId,channel])
+}
