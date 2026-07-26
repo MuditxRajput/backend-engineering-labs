@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const payloadValidation = z.object({
+export const validation = z.object({
   userId: z.number(),
 
   recipient: z.string(),
@@ -27,3 +27,15 @@ export const payloadValidation = z.object({
 
   payload: z.record(z.string(), z.any()).optional(),
 });
+
+export const payloadValidation = (req,res,next)=>{
+   try {
+   const response =  validation.safeParse(req.body);
+   if(response.data)
+   {
+     next();
+   }
+   } catch (error) {
+      return {error:error.message,success:false};
+   }
+}

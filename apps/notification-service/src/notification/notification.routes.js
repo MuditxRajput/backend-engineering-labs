@@ -7,6 +7,4 @@ const notificationRoutes = express.Router();
 
 notificationRoutes.post('/',payloadValidation,createNotification);
 
-
-
 export default notificationRoutes;
