@@ -1,29 +1,28 @@
+import { prisma } from "../../../../packages/database/prisma"
 
-   const set = new Set();
-export const createNotificationService=async(n)=>{
-   console.log("Business Logic Running...");
-    if(!n.event || n.event==="") return {
-        success:false,
-        message : "No event present.."
+
+// 
+export const createNotificationService=async(notification)=>{
+   try {
+    const savedAsPendingState = await prisma.Notification.create({
+       data:{
+         userId : notification?.userId,
+         recipient : notification?.recipient,
+         event : notification.event,
+         status : 'Pending',
+         orderId : notification?.orderId || null,
+         channel : notification.channel,
+         payload : notification.payload || null,
+         errorMessage : notification.errorMessage || null,
+         sentAt : null,
+       }    
+    });
+    if(!savedAsPendingState){
+        return {msg:'Error in saving the data in pending state',success:false}
     }
-    // make a new memory set ...
- 
-    const key = `${n.event}:${n.data.orderId}`;
-    console.log(key);
+    // if the data is successfully saved we have to add in the job in the queue ...
     
-    if(set.has(key))
-    {
-        return {
-            success:false,
-            message : 'Duplicate notification..'
-        }
-    }
-    set.add(key);
-    // console.log(n);
-
-    return {
-
-        success:true,
-        message: "Notification Accepted"
-    };
+   } catch (error) {
+    
+   }
 }
