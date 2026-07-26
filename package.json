@@ -16,5 +16,8 @@
       "onFail": "download"
     }
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "ioredis": "^5.11.1"
+  }
 }
