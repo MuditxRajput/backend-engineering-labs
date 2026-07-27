@@ -45,6 +45,23 @@ model Notification{
   sentAt  DateTime ?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  outbox Outbox?
   @@unique([userId,event,orderId,channel])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+enum OutboxStatus{
+    PENDING
+    PROCESSED
+}
+model Outbox{
+  id Int @id @default(autoincrement())
+  notificationId Int
+  status OutboxStatus @default(PENDING)
+  notification Notification @relation(fields:[notificationId] , references:[id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([notificationId])
+  @@index([status])
 }
