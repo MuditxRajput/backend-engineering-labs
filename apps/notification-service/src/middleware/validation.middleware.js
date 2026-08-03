@@ -33,9 +33,14 @@ export const payloadValidation = (req,res,next)=>{
    const response =  validation.safeParse(req.body);
    if(response.data)
    {
-     next();
+     return next();
    }
+   return res.status(400).json({
+    msg: "validation failed",
+    success: false,
+    errors: response.error.issues, // optional
+  });
    } catch (error) {
-      return {error:error.message,success:false};
+    return res.status(500).json({ msg: error.message, success: false });
    }
 }

@@ -1,9 +1,11 @@
 import { prisma } from "@backend/database";
 
-export const savedAsPendingStateInDb = async(notification)=>{
-    try {
-        if(!notification) return {msg:'Notification data is missing',success:false};
-        return await prisma.Notification.create({
+export const savedAsPendingStateInDb = async(tx,notification)=>{
+  
+      if(!notification){
+        throw new Error("Notification payload missing");
+     }
+        return await tx.Notification.create({
             data: {
             userId: notification?.userId,
             recipient: notification?.recipient,
@@ -14,21 +16,19 @@ export const savedAsPendingStateInDb = async(notification)=>{
             payload: notification.payload || null,
          }
         })
-    } catch (error) {
-        return {error:error.message,success:false};
-    }
+   
 }
 
-export const notificationSaveInOutBox = async(notification)=>{
-  try {
-    if(!notification) return {msg:'Notification is missing in outbox table',success:true};
-    return await prisma.Outbox.create({
+export const notificationSaveInOutBox = async(tx,notification)=>{
+ 
+    if(!notification){
+      throw new Error("Notification payload missing");
+   }
+    return await tx.Outbox.create({
         data:{
             notificationId : notification.id,
             status : 'PENDING',
         }
     })
-  } catch (error) {
-    return {error:`Error in outbox ${error.message}`,success:false};
-  }
+  
 }
