@@ -1,6 +1,6 @@
 import { prisma } from "@backend/database";
-import { notificationQueue } from "../queues/queue";
-import { addJobInNotificationQueue } from "../notification/notification.queue";
+import { notificationQueue } from "../queues/queue.js";
+import { addJobInNotificationQueue } from "../notification/notification.queue.js";
 
 // fetch all the jobid whose status is pending..
 export const  outboxWorker =async()=>{
@@ -22,6 +22,8 @@ export const  outboxWorker =async()=>{
                 status : 'PROCESSED',
             }
         })
+        console.log('Job is added in the queue successfully');
+        
     }
     }
    } catch (error) {

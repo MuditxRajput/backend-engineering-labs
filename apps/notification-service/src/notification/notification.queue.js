@@ -5,7 +5,12 @@ export const addJobInNotificationQueue = async (notificationId) => {
         if(!notificationId) return {msg:'NotificationId is missing',success:false};
         console.log('this is payload... which is added in the queue', notificationId);
         const response = await notificationQueue.add("send-notification", notificationId,{
-            jobId : `notification-${notificationId}`
+            jobId : `notification-${notificationId}`,
+            attempts : 3,
+            backoff : {
+                type : 'exponential',
+                delay : 2000,
+            }
         });
         // if (!response) return { msg: 'Error in saving the job in the notification queue', success: false };
         return { msg: 'Job added successfully in notification queue', success: true };
