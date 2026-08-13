@@ -5,11 +5,12 @@ import { addJobInNotificationQueue } from "../notification/notification.queue.js
 // fetch all the jobid whose status is pending..
 export const  outboxWorker =async()=>{
    try {
-    const pendingRecords = await prisma.Outbox.findMany({
-        where : {
-            status : 'PENDING',
-        }
-    });
+    const pendingRecords = await prisma.$queryRaw`
+       SELECT "notificationId" FROM "Outbox"
+       WHERE status ='PENDING'
+       ORDER BY id ASC
+       LIMIT 100
+    `
     for (const job of pendingRecords)
     {
        const response =  await addJobInNotificationQueue(job.notificationId);
