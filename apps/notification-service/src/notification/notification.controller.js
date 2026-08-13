@@ -1,4 +1,4 @@
-import { createNotificationService } from "./notification.service.js";
+import { createNotificationService, getNotificationService } from "./notification.service.js";
 
 export const createNotification = async (req, res) => {
     try {
@@ -15,3 +15,19 @@ export const createNotification = async (req, res) => {
         });
     }
 };
+
+export const getNotificationInfo=async(req,res)=>{
+   try {
+    const {id} = req.params;
+    console.log(typeof(id));
+    
+    const response = await getNotificationService(Number(id));
+    if(!response.success)
+    {
+        throw new Error(response.msg);
+    }
+    return res.status(200).json({msg:response.msg,info : response.info,success:true});
+   } catch (error) {
+    return res.status(500).json({msg:error.message,success:false});
+   }
+}

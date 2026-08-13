@@ -1,3 +1,4 @@
+
 import { prisma } from "../../../../packages/database/prisma.js"
 import { notificationSaveInOutBox, savedAsPendingStateInDb } from "./notification.repository.js";
 export const createNotificationService = async (notification) => {
@@ -21,4 +22,20 @@ export const createNotificationService = async (notification) => {
       }
 
    }
+}
+export const getNotificationService = async(id)=>{
+    try {
+      if(!id) return {msg:'Notificaiton id is missing',status : 400,success:false};
+      const existingNotification = await prisma.Notification.findUnique({
+         where : {
+            id : id,
+         },
+         include :{
+            outbox : true
+         }
+      });
+      return {msg:`Notification info of ${id} `,info : existingNotification,success:200,success:true};
+    } catch (error) {
+      return {msg:error.message,success:false};
+    }
 }
