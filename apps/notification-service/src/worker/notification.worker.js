@@ -3,6 +3,7 @@ import connection from "../../../../packages/redis/redis.connection.js";
 import { prisma } from "@backend/database";
 
 import { sendEmail } from "./sendEmail.worker.js";
+import { allowedResend } from "../../../../packages/redis/rate-limiter.js";
 export const notificationWorker = new Worker('notification',async (job)=>{
     try {
         const jobId = job.data;
@@ -13,6 +14,11 @@ export const notificationWorker = new Worker('notification',async (job)=>{
         });
         if(!existedNotification) throw new Error('No notificatin exist')
         if(existedNotification.status==='SENT') return;
+        const allowed = await allowedResend();
+        if(!allowed)
+        {
+            throw new Error('Rate limit exceed');
+        }
         const channel = existedNotification?.channel;
         const event = existedNotification?.event;
 
