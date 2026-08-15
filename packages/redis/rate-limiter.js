@@ -14,11 +14,10 @@ export const allowedResend = async()=>{
        {
         return false;
        }
-
-       await connection.zadd(KEY,{
-        score : now,
-        value: crypto.randomUUID()
-       });
+       await connection.zadd(KEY,
+        now,
+         crypto.randomUUID()
+       );
        return true;
     } catch (error) {
         console.log("Rate limited error:",error);
