@@ -32,6 +32,10 @@ enum NotificationEvent {
   ORDER_CANCELLED
   ORDER_DELAYED
 }
+enum DLQStatus{
+  PENDING
+  COMPLETE
+}
 model Notification{
   id Int @id @default(autoincrement())
   userId Int
@@ -43,6 +47,7 @@ model Notification{
   payload Json?
   errorMessage String?
   sentAt  DateTime ?
+  dlqStatus DLQStatus ?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   outbox Outbox?
