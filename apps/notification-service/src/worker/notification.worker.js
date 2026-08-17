@@ -4,14 +4,21 @@ import { prisma } from "@backend/database";
 
 import { sendEmail } from "./sendEmail.worker.js";
 import { allowedResend } from "../../../../packages/redis/rate-limiter.js";
+import { deadNotificationQueue } from "../queues/queue.js";
 export const notificationWorker = new Worker('notification',async (job)=>{
+    let existedNotification;
+    const jobId = job.data;
     try {
-        const jobId = job.data;
-        const existedNotification = await prisma.Notification.findUnique({
+        console.log('Worker is running');
+        
+        
+         existedNotification = await prisma.Notification.findUnique({
             where:{
                 id : jobId
             }
         });
+        console.log(existedNotification);
+        
         if(!existedNotification) throw new Error('No notificatin exist')
         if(existedNotification.status==='SENT') return;
         const allowed = await allowedResend();
@@ -73,7 +80,19 @@ export const notificationWorker = new Worker('notification',async (job)=>{
         }
     //    return {msg:'Hey i am worker and i get the job'}
     } catch (error) {
-        console.log(`Error in notification worker `,error.message);
-        throw new Error(error.message);
+       if(job.attemptsMade+1>=job.opts.attempts)
+       {
+            await prisma.Notification.update({
+                where:{
+                    id : jobId,
+                },
+                data:{
+                    status :'FAILED',
+                    errorMessage : `${error.message}`,
+                    dlqStatus : 'PENDING',
+                }
+            })
+       }
+       throw new Error(error.message);
     }
 },{connection})

@@ -3,6 +3,7 @@ import app from './app.js';
 import { outboxWorker } from './worker/outbox.relay.js';
 import { notificationWorker } from './worker/notification.worker.js';
 import { recoveryOutboxWorker } from './worker/recovery.outbox.js';
+import { dlqRecovery } from './worker/dlq.recovery.js';
 const PORT = process.env.PORT;
 
 app.listen(PORT, () => {
@@ -18,7 +19,7 @@ const outboxWorkerfn1 = () => {
         ).finally(() => {
             running1 = false;
         });
-    }, 3000);
+    }, 10000);
 }
 const outboxWorkerfn2 = () => {
     setInterval(() => {
@@ -27,8 +28,9 @@ const outboxWorkerfn2 = () => {
         outboxWorker().catch((err) => console.error('Outbox error', err)
         ).finally(() => {
             running2 = false;
+
         });
-    }, 3000);
+    }, 10000);
 }
 let isrecoveryRunning = false;
 const recoveryOutboxWorkerfn = () => {
@@ -40,6 +42,15 @@ const recoveryOutboxWorkerfn = () => {
             }
         }, 3000)
 }
+let dlqRunning = false;
+const dlqRecoveryfn = ()=>{
+    // if(dlqRunning) return;
+    setInterval(() => {
+        if(dlqRunning) return;
+        dlqRecovery().catch((err)=>console.log(err.message)).finally(()=>dlqRunning = false)
+    }, 3000);
+}
 outboxWorkerfn1();
 outboxWorkerfn2();
 recoveryOutboxWorkerfn();
+dlqRecoveryfn();

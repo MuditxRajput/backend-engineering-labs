@@ -1,3 +1,4 @@
+import { prisma } from "@backend/database";
 export const recoveryOutboxWorker = async()=>{
     try {
         await prisma.$transaction(async(tx)=>{

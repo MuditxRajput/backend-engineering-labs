@@ -1,0 +1,23 @@
+config:
+  target: "http://localhost:8000"
+  phases:
+    - duration: 10
+      arrivalCount: 10000
+  processor: "./load-test.cjs"
+
+scenarios:
+  - flow:
+      - function: "generateNotification"
+      - post:
+          url: "/notifications"
+          json:
+            userId: "{{ userId }}"
+            recipient: "{{ recipient }}"
+            channel: "EMAIL"
+            event: "PAYMENT_SUCCESS"
+            orderId: "{{ orderId }}"
+            payload:
+              customerName: "{{ customerName }}"
+              amount: "{{ amount }}"
+              currency: "INR"
+              paymentId: "{{ paymentId }}"

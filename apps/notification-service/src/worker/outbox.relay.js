@@ -30,7 +30,7 @@ const addNoticationInQueue = async (records) => {
    }
 }
 
-export const  outboxWorker =async()=>{
+export const outboxWorker =async()=>{
    try {
     let pendingRecords
     await prisma.$transaction(async(tx)=>{
@@ -55,8 +55,8 @@ export const  outboxWorker =async()=>{
          })
      }  
     });
-    console.log("pending records:",pendingRecords);
-    console.log("count:",pendingRecords.length);
+    // console.log("pending records:",pendingRecords);
+    // console.log("count:",pendingRecords.length);
     await addNoticationInQueue(pendingRecords);  
    } catch (error) {
     throw new Error(error.message);

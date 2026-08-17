@@ -3,7 +3,7 @@ export const addJobInNotificationQueue = async (notificationId) => {
     try {
         
         if(!notificationId) return {msg:'NotificationId is missing',success:false};
-        console.log('this is payload... which is added in the queue', notificationId);
+        // console.log('this is payload... which is added in the queue', notificationId);
         const response = await notificationQueue.add("send-notification", notificationId,{
             jobId : `notification-${notificationId}`,
             attempts : 3,
