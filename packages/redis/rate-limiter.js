@@ -1,11 +1,12 @@
 // for rate limiter i use the sliding window algo...
 import connection from "./redis.connection.js";
 import crypto from 'crypto'
-const KEY="resend:sliding";
-const WINDOW = 60*1000;
-const LIMIT = 100;
+
 export const allowedResend = async()=>{
     try {
+        const KEY="resend:sliding";
+        const WINDOW = 60*1000;
+        const LIMIT = 100;
        const now = Date.now();
        await connection.zremrangebyscore(KEY,0,now-WINDOW);
 
@@ -24,3 +25,4 @@ export const allowedResend = async()=>{
         return false;
     }
 }
+
