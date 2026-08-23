@@ -1,8 +1,8 @@
 config:
   target: "http://localhost:8000"
   phases:
-    - duration: 10
-      arrivalCount: 10000
+  - duration: 60
+    arrivalRate: 120
   processor: "./load-test.cjs"
 
 scenarios:

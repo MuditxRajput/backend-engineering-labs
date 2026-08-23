@@ -26,6 +26,6 @@ export const recoveryOutboxWorker = async()=>{
           }
         })
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
     }
 }

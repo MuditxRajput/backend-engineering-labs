@@ -3,29 +3,25 @@ import connection from "../../../../packages/redis/redis.connection.js";
 import { prisma } from "@backend/database";
 
 import { sendEmail } from "./sendEmail.worker.js";
-import { allowedResend } from "../../../../packages/redis/rate-limiter.js";
+// import { allowedResend } from "../../../../packages/redis/rate-limiter.js";
 import { deadNotificationQueue } from "../queues/queue.js";
 export const notificationWorker = new Worker('notification',async (job)=>{
     let existedNotification;
     const jobId = job.data;
     try {
-        console.log('Worker is running');
-        
-        
          existedNotification = await prisma.Notification.findUnique({
             where:{
                 id : jobId
             }
         });
-        console.log(existedNotification);
         
         if(!existedNotification) throw new Error('No notificatin exist')
         if(existedNotification.status==='SENT') return;
-        const allowed = await allowedResend();
-        if(!allowed)
-        {
-            throw new Error('Rate limit exceed');
-        }
+        // const allowed = await allowedResend();
+        // if(!allowed)
+        // {
+        //     throw new Error('Rate limit exceed');
+        // }
         const channel = existedNotification?.channel;
         const event = existedNotification?.event;
 
@@ -69,7 +65,7 @@ export const notificationWorker = new Worker('notification',async (job)=>{
                             id : jobId,
                         },
                         data:{
-                            status : 'FAILED',
+                            status : 'SENT',
                         }
                     })
                 }

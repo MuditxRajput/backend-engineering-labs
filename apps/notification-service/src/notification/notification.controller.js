@@ -19,8 +19,6 @@ export const createNotification = async (req, res) => {
 export const getNotificationInfo=async(req,res)=>{
    try {
     const {id} = req.params;
-    console.log(typeof(id));
-    
     const response = await getNotificationService(Number(id));
     if(!response.success)
     {

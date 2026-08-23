@@ -15,7 +15,7 @@ const outboxWorkerfn1 = () => {
     setInterval(() => {
         if (running1) return;
         running1 = true;
-        outboxWorker().catch((err) => console.error('Outbox error', err)
+        outboxWorker('OUTBOX-WORKER-1').catch((err) => console.error('Outbox error', err)
         ).finally(() => {
             running1 = false;
         });
@@ -25,7 +25,7 @@ const outboxWorkerfn2 = () => {
     setInterval(() => {
         if (running2) return;
         running2 = true;
-        outboxWorker().catch((err) => console.error('Outbox error', err)
+        outboxWorker('OUTBOX-WORKER-2').catch((err) => console.error('Outbox error', err)
         ).finally(() => {
             running2 = false;
 
@@ -47,7 +47,7 @@ const dlqRecoveryfn = ()=>{
     // if(dlqRunning) return;
     setInterval(() => {
         if(dlqRunning) return;
-        dlqRecovery().catch((err)=>console.log(err.message)).finally(()=>dlqRunning = false)
+        dlqRecovery().catch((err)=>console.error(err.message)).finally(()=>dlqRunning = false)
     }, 3000);
 }
 outboxWorkerfn1();
