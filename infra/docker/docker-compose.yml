@@ -27,6 +27,14 @@ services:
 
     volumes:
       - redis_data:/data
+  toxiproxy:
+    image: ghcr.io/shopify/toxiproxy:2.9.0
+    container_name: toxiproxy
+    restart: unless-stopped
+
+    ports:
+      - "8474:8474"
+      - "8666:8666"
 
 volumes:
   postgres_data:

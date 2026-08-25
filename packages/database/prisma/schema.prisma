@@ -2,14 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 enum NotificationStatus {
   PENDING
@@ -33,6 +32,10 @@ enum NotificationEvent {
   ORDER_CANCELLED
   ORDER_DELAYED
 }
+enum DLQStatus{
+  PENDING
+  COMPLETE
+}
 model Notification{
   id Int @id @default(autoincrement())
   userId Int
@@ -44,8 +47,28 @@ model Notification{
   payload Json?
   errorMessage String?
   sentAt  DateTime ?
+  dlqStatus DLQStatus ?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
+  outbox Outbox?
   @@unique([userId,event,orderId,channel])
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+enum OutboxStatus{
+    PENDING
+    PROCESSING
+    PROCESSED
+}
+model Outbox{
+  id Int @id @default(autoincrement())
+  notificationId Int
+  status OutboxStatus @default(PENDING)
+  notification Notification @relation(fields:[notificationId] , references:[id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([notificationId])
+  @@index([status,id])
+  @@index([status,updatedAt])
 }
