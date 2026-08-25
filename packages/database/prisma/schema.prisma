@@ -69,5 +69,6 @@ model Outbox{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   @@unique([notificationId])
-  @@index([status])
+  @@index([status,id])
+  @@index([status,updatedAt])
 }
