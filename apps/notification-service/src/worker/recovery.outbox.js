@@ -8,7 +8,11 @@ export const recoveryOutboxWorker = async()=>{
                 updatedAt : {
                     lt: new Date(Date.now()-5*60*1000)
                 }
-            }
+            },
+            orderBy:{
+                updatedAt : "asc"
+            },
+            take : 100,
           });
           const ids = processedData?.map((val)=>val.notificationId);
           if(ids.length>0)
