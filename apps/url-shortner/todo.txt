@@ -1,0 +1,16 @@
+✅ URL creation
+✅ Base62
+✅ Redis caching
+✅ Cache miss → DB
+✅ Redis failure fallback
+✅ Basic analytics
+
+👉 NEXT: Cache Stampede
+
+Then:
+→ Rate Limiting
+→ Async Analytics / Background Jobs
+→ Analytics aggregation
+→ Failure handling
+→ Load testing again
+→ Bottleneck analysis

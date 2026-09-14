@@ -1,0 +1,18 @@
+config:
+  target: "http://localhost:8080"
+  phases:
+    - duration: 15
+      arrivalRate: {{ $processEnvironment.RATE }}
+  processor: "../load-test.cjs"
+  plugins:
+    expect: {}
+
+scenarios:
+  - flow:
+      - function: "generateShortUrlRequest"
+      - post:
+          url: "/api/v1/create-short-url"
+          json:
+            longUrl: "{{ longUrl }}"
+          expect:
+            - statusCode: 200

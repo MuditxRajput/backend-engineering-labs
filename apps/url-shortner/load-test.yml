@@ -1,0 +1,35 @@
+config:
+  target: "http://localhost:8080"
+  phases:
+    - duration: 60
+      arrivalRate: 100
+      rampTo: 200
+      name: Warm up
+    - duration: 60
+      arrivalRate: 200
+      name: Sustained load
+  processor: "./load-test.cjs"
+
+scenarios:
+  - name: Create short URL
+    weight: 1
+    flow:
+      - function: "generateShortUrlRequest"
+      - post:
+          url: "/api/v1/create-short-url"
+          json:
+            longUrl: "{{ longUrl }}"
+
+  - name: Redirect
+    weight: 8
+    flow:
+      - get:
+          url: "/q17"
+          followRedirect: false
+
+  - name: Not found
+    weight: 1
+    flow:
+      - get:
+          url: "/{{ $randomString() }}"
+          followRedirect: false

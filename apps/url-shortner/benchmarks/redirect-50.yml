@@ -1,0 +1,15 @@
+config:
+  target: "http://localhost:8080"
+  phases:
+    - duration: 15
+      arrivalRate: 50
+  plugins:
+    expect: {}
+
+scenarios:
+  - flow:
+      - get:
+          url: "/q17"
+          followRedirect: false
+          expect:
+            - statusCode: 302
