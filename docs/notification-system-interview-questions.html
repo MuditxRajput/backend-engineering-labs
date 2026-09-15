@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Notification System Interview Questions</title>
+    <style>
+      :root {
+        --bg: #f8fafc;
+        --paper: #ffffff;
+        --text: #0f172a;
+        --muted: #475569;
+        --primary: #0f766e;
+        --accent: #e2e8f0;
+        --code: #f1f5f9;
+        --divider: #cbd5e1;
+      }
+
+      * { box-sizing: border-box; }
+
+      html, body {
+        margin: 0;
+        padding: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", Arial, sans-serif;
+        line-height: 1.6;
+      }
+
+      body {
+        padding: 28px;
+      }
+
+      .page {
+        max-width: 980px;
+        margin: 0 auto;
+        background: var(--paper);
+        box-shadow: 0 10px 35px rgba(15, 23, 42, 0.08);
+        border: 1px solid var(--accent);
+        border-radius: 12px;
+        padding: 40px 52px 48px;
+      }
+
+      h1 {
+        font-size: 30px;
+        margin-top: 0;
+        margin-bottom: 10px;
+        color: var(--text);
+      }
+
+      .subtitle {
+        color: var(--muted);
+        font-size: 14px;
+        margin-bottom: 24px;
+      }
+
+      h2 {
+        font-size: 22px;
+        margin-top: 30px;
+        margin-bottom: 10px;
+        color: var(--primary);
+        border-bottom: 2px solid var(--divider);
+        padding-bottom: 6px;
+      }
+
+      h3 {
+        font-size: 17px;
+        margin: 20px 0 8px;
+        color: var(--text);
+      }
+
+      p, li {
+        font-size: 14px;
+        color: var(--text);
+      }
+
+      ul, ol {
+        margin-top: 8px;
+        margin-bottom: 12px;
+        padding-left: 24px;
+      }
+
+      li {
+        margin-bottom: 6px;
+      }
+
+      .followup {
+        background: #f8fafc;
+        border-left: 4px solid var(--primary);
+        padding: 10px 12px;
+        margin: 12px 0 18px;
+        border-radius: 6px;
+      }
+
+      .followup strong {
+        color: var(--primary);
+      }
+
+      .cheat {
+        margin-top: 22px;
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 13px;
+      }
+
+      .cheat th, .cheat td {
+        border: 1px solid var(--divider);
+        padding: 8px 10px;
+        vertical-align: top;
+        text-align: left;
+      }
+
+      .cheat th {
+        background: #e2e8f0;
+      }
+
+      .final-answer {
+        background: #f0fdfa;
+        border: 1px solid #99f6e4;
+        padding: 14px 16px;
+        border-radius: 8px;
+        margin-top: 18px;
+      }
+
+      code {
+        font-family: Consolas, monospace;
+        background: var(--code);
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+        }
+
+        .page {
+          box-shadow: none;
+          border: none;
+          border-radius: 0;
+          max-width: none;
+          margin: 0;
+          padding: 24px 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <h1>Notification System Interview Questions</h1>
+      <div class="subtitle">Outbox pattern, reliability design, retry logic, deadlocks, idempotency, and follow-up questions</div>
+
+      <h2>1. What is the architecture of this notification system?</h2>
+      <p>This system is a reliable asynchronous notification pipeline built using PostgreSQL, Redis + BullMQ, Express, and background workers.</p>
+      <ul>
+        <li>Client sends a notification request.</li>
+        <li>API validates the payload.</li>
+        <li>Notification and Outbox are inserted in one transaction.</li>
+        <li>Transaction commits.</li>
+        <li>Outbox relay scans pending rows and enqueues jobs.</li>
+        <li>Worker consumes the queue and sends the actual notification.</li>
+        <li>Status is updated to SENT or FAILED.</li>
+      </ul>
+      <div class="followup"><strong>Follow-up:</strong> Why is this architecture needed? Because the system must survive crashes, Redis outage, delayed workers, and failed sends without losing intent.</div>
+
+      <h2>2. Why do we need the outbox pattern?</h2>
+      <p>The outbox pattern solves the problem of two different systems with separate transactions: PostgreSQL and Redis. You cannot reliably do both in one atomic operation.</p>
+      <p>If you save a notification in DB and then crash before enqueueing to Redis, you lose the notification. The outbox stores the intent in the same database transaction, so a relay can publish it later.</p>
+      <div class="followup"><strong>Follow-up:</strong> What failure are we solving? The crash window between “DB write” and “queue job add.” Without outbox, the notification may exist in Postgres but never be enqueued.</div>
+
+      <h2>3. Why do we need an Outbox table when we already have a Notification table?</h2>
+      <p>The Notification table answers: “What happened?” The Outbox table answers: “What still needs to be published to the queue?”</p>
+      <ul>
+        <li>Notification tracks business state.</li>
+        <li>Outbox tracks queue publication intent.</li>
+        <li>Notification may still be pending even if it is already queued.</li>
+      </ul>
+      <div class="followup"><strong>Follow-up:</strong> Why not just scan Notification where status = PENDING? Because a notification can already be in Redis and still remain PENDING, causing duplicate jobs if you enqueue again.</div>
+
+      <h2>4. Why are Notification and Outbox written in one DB transaction?</h2>
+      <p>Because both are part of the same business event and must be all-or-nothing.</p>
+      <p>If one succeeds and the other fails, the system becomes inconsistent. Using one transaction guarantees consistency.</p>
+      <div class="followup"><strong>Follow-up:</strong> What happens if the transaction fails? It rolls back completely and the API should report a failure so the client can retry.</div>
+
+      <h2>5. What if the server crashes after the DB commit but before queue.add runs?</h2>
+      <p>This is the classic outbox case. The DB commit succeeds, so both Notification and Outbox are durable. The relay reads pending Outbox rows later and enqueues the job.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why is this safe? Because the durable intent is stored in PostgreSQL, which acts as the system of record.</div>
+
+      <h2>6. What if Redis is down when the relay tries to enqueue?</h2>
+      <p>The relay should leave the Outbox row as PENDING and retry later. The database still records the original intent, so the job is not lost.</p>
+      <div class="followup"><strong>Follow-up:</strong> Should the API fail if Redis is down? Usually no, if the database commit succeeded. Accept the request and process asynchronously.</div>
+
+      <h2>7. Why can’t we call queue.add inside the same DB transaction?</h2>
+      <p>Because PostgreSQL and Redis are different systems with different commit semantics. A DB transaction cannot include Redis writes atomically.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why not do direct queue.add after commit in the API? Because crashes or temporary Redis outages still create a gap; the relay is a safer, retryable bridge.</div>
+
+      <h2>8. What is the problem of duplicate jobs?</h2>
+      <p>Duplicate jobs appear when the same notification is enqueued multiple times because of retries, multiple relay passes, or worker reprocessing.</p>
+      <p>That can result in duplicate sends.</p>
+      <div class="followup"><strong>Follow-up:</strong> How do you solve it? Use a stable jobId and idempotent worker logic.</div>
+
+      <h2>9. Why is jobId important?</h2>
+      <p>jobId gives each message a stable identity in BullMQ. If the system tries to add the same job again, Redis rejects it instead of creating a duplicate.</p>
+      <div class="followup"><strong>Follow-up:</strong> What happens without jobId? Duplicate jobs are likely and users may receive the same notification twice.</div>
+
+      <h2>10. What happens if queue.add succeeds but the Outbox update fails?</h2>
+      <p>This is a distributed system race. Redis and Postgres are not in one transaction. The queue may have the job, but the database still says PENDING.</p>
+      <p>The fix is idempotent jobId plus retry semantics. The relay simply tries again later, but the duplicate is blocked by the same key.</p>
+      <div class="followup"><strong>Follow-up:</strong> Can you guarantee exactly-once across DB and Redis? Not practically. You aim for at-least-once delivery with idempotency.</div>
+
+      <h2>11. How does the outbox relay avoid duplicates?</h2>
+      <p>The relay selects pending rows, marks them PROCESSING, and then calls queue.add. If a job with same ID already exists, BullMQ throws “already exists,” which the code treats as success.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why is it dangerous to mark every exception as success? Because if Redis is down, you would incorrectly mark the outbox as processed and hide a real failure.</div>
+
+      <h2>12. Why is “already exists” treated as success?</h2>
+      <p>Because the intended result has already happened: the queue already has the job. The system should not keep retrying endlessly for the same ID.</p>
+      <div class="followup"><strong>Follow-up:</strong> What if the error is not “already exists”? Then it is a real queue problem, and the row should remain PENDING for retry.</div>
+
+      <h2>13. Why is FOR UPDATE SKIP LOCKED used in the relay?</h2>
+      <p>It prevents multiple workers from locking and processing the same outbox rows concurrently.</p>
+      <div class="followup"><strong>Follow-up:</strong> What happens without it? Multiple workers may enqueue the same job row more than once.</div>
+
+      <h2>14. What is a deadlock, and why is it relevant here?</h2>
+      <p>A deadlock happens when two transactions lock rows in opposite order and wait on each other forever.</p>
+      <p>In this system, deadlocks can happen if multiple workers update related rows concurrently. The solution is to keep transactions short, process rows in a consistent order, and use skip-locked patterns.</p>
+      <div class="followup"><strong>Follow-up:</strong> If deadlock occurs, how do you recover? Retry the transaction or let BullMQ retry the message.</div>
+
+      <h2>15. Why is setInterval risky in the relay?</h2>
+      <p>setInterval triggers on a fixed clock, not after the previous task finishes. If one run is slow, the next run can overlap and process the same data again.</p>
+      <div class="followup"><strong>Follow-up:</strong> How do we solve it? Use an isRunning lock so only one relay run executes at a time.</div>
+
+      <h2>16. Why is forEach with async callbacks dangerous?</h2>
+      <p>forEach does not await async callbacks. It schedules them and moves on. This can cause race conditions and duplicate processing.</p>
+      <div class="followup"><strong>Follow-up:</strong> What is safer? Use for...of with await inside the loop.</div>
+
+      <h2>17. Why do we need multiple statuses?</h2>
+      <p>Statuses represent the lifecycle of a notification:</p>
+      <ul>
+        <li>PENDING: created, not yet processed</li>
+        <li>PROCESSING: actively being handled</li>
+        <li>SENT: successfully delivered</li>
+        <li>FAILED: delivery failed and needs recovery</li>
+      </ul>
+      <div class="followup"><strong>Follow-up:</strong> Why not use only a Boolean? Because the system needs more than “done or not done” — it needs lifecycle visibility.</div>
+
+      <h2>18. Why does the worker check if notification.status === 'SENT'?</h2>
+      <p>This is idempotency logic. If a message is retried or redelivered, the worker should not send it twice.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why is idempotency essential? Because async systems may retry a message after partial success.</div>
+
+      <h2>19. What is the issue with returning an object inside a Prisma transaction callback?</h2>
+      <p>Returning a normal object from inside a transaction callback may look like success to Prisma and incorrectly commit, even when you intended to fail.</p>
+      <div class="followup"><strong>Follow-up:</strong> What is the correct pattern? Throw an error inside the transaction, so Prisma rolls back the whole transaction.</div>
+
+      <h2>20. Why can validation middleware cause a request to hang?</h2>
+      <p>If validation fails but the middleware does not send a response and does not call next(), the request remains open indefinitely.</p>
+      <div class="followup"><strong>Follow-up:</strong> What is the correct fix? Return a response immediately with status 400 and a clear error body.</div>
+
+      <h2>21. Why does the system accept the request even if Redis is temporarily down?</h2>
+      <p>Because the business intent is already durable in Postgres. Once the DB transaction commits, the request has been accepted.</p>
+      <div class="followup"><strong>Follow-up:</strong> When should the API fail? When validation fails or the DB transaction fails.</div>
+
+      <h2>22. What if the queue is full or the worker cannot keep up?</h2>
+      <p>This becomes a capacity and backpressure problem. BullMQ can still hold jobs in Redis, but the system must have retry policies, queue monitoring, and bounded retries.</p>
+      <div class="followup"><strong>Follow-up:</strong> What should you monitor? Queue depth, worker lag, retry counts, and failure rate.</div>
+
+      <h2>23. What is DLQ and why do we need it?</h2>
+      <p>DLQ stands for dead-letter queue. It is used for events that fail repeatedly and should not continue retrying forever.</p>
+      <p>Failed notifications can be marked with a pending DLQ state and recovered manually or automatically later.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why not retry forever? Some failures are permanent or expensive to retry.</div>
+
+      <h2>24. What is the difference between Outbox Relay and Worker?</h2>
+      <p>Relay: DB to Redis. Worker: Redis to external delivery provider.</p>
+      <div class="followup"><strong>Follow-up:</strong> Why separate them? Because they fail in different places and should be independently retried and monitored.</div>
+
+      <h2>25. What are the hardest failure modes in this system?</h2>
+      <ul>
+        <li>Crash between DB commit and Redis enqueue</li>
+        <li>Redis outage during publication</li>
+        <li>Duplicate job creation</li>
+        <li>Worker retry storm</li>
+        <li>Lock contention and deadlock</li>
+        <li>Partial success between queue and DB state</li>
+      </ul>
+      <div class="followup"><strong>Follow-up:</strong> How are they handled? Through durable DB intent, idempotent jobs, retry loops, lock-aware DB queries, and explicit status tracking.</div>
+
+      <h2>26. What is the most important interview takeaway?</h2>
+      <p>The key design principle is to make the database the source of truth and the queue a transport layer. That makes the system resilient, retriable, and recoverable under partial failures.</p>
+
+      <h2>27. How would you answer the full interview summary?</h2>
+      <p>We designed the notification system as an asynchronous, durable, idempotent pipeline. The database is the system of record. We store Notification and Outbox in the same transaction so intent is never lost. The outbox relay publishes pending events to Redis/BullMQ, and a separate worker handles delivery with retries, idempotency, and dead-letter handling. The system aims for at-least-once delivery with idempotent processing rather than exact once across independent systems.</p>
+
+      <h2>28. Quick cheat sheet</h2>
+      <table class="cheat">
+        <thead>
+          <tr>
+            <th>Failure</th>
+            <th>What we do</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>DB down during accept</td>
+            <td>Fail the request and retry later</td>
+          </tr>
+          <tr>
+            <td>Crash before commit</td>
+            <td>Transaction rolls back</td>
+          </tr>
+          <tr>
+            <td>Crash after commit before queue publish</td>
+            <td>Outbox row remains pending and relay retries</td>
+          </tr>
+          <tr>
+            <td>Redis down</td>
+            <td>Leave Outbox pending and retry later</td>
+          </tr>
+          <tr>
+            <td>Duplicate job</td>
+            <td>Use stable jobId and idempotent worker logic</td>
+          </tr>
+          <tr>
+            <td>Deadlock</td>
+            <td>Short txns and consistent ordering / skip-locked</td>
+          </tr>
+          <tr>
+            <td>Permanent provider failure</td>
+            <td>Retry with exponential backoff and DLQ</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="final-answer">
+        <strong>Final interview answer:</strong><br />
+        “We built the notification system as a durable async pipeline. The database is the source of truth, the outbox records the intent to enqueue, the relay publishes jobs to Redis, and the worker sends the actual notification with retries, idempotency, and dead-letter handling. The design is optimized for partial failures and recovery, not perfect atomicity across separate systems.”
+      </div>
+    </div>
+  </body>
+</html>

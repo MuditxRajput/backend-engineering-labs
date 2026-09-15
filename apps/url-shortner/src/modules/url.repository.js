@@ -4,7 +4,7 @@ export const saveShortUrlInDb=async(base62,longUrl)=>{
         // const shortUrl= `http://localhost:3000/${base62}`;
         const result = await prisma.shorturl.create({
             data:{
-                shortUrl : String(base62),
+                shortCode : String(base62),
                 longUrl
             }
         });
@@ -41,11 +41,11 @@ export const existingLongUrl = async(longUrl)=>{
     }
 
 }
-export const checkShortUrlInDb = async(shortUrl)=>{
+export const checkShortUrlInDb = async(shortCode)=>{
     try {
         const isPresent = await prisma.shorturl.findUnique({
             where : {
-                shortUrl,
+                shortCode,
             }
         });
         return isPresent;

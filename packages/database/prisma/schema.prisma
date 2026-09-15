@@ -72,3 +72,12 @@ model Outbox{
   @@index([status,id])
   @@index([status,updatedAt])
 }
+
+
+model shorturl{
+  id Int @id @default(autoincrement())
+  shortCode String @unique 
+  longUrl String  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
