@@ -1,5 +1,4 @@
 import 'dotenv/config.js'
-import express from 'express'
-import { app } from './app'
+import { app } from './app.js';
 
-app.listen(process.env.PORT,()=>console.log(`Server is running..`));
+app.listen(process.env.PORT, () => { console.log(`Server is running.. at port ${process.env.PORT}`) });
