@@ -1,6 +1,6 @@
 import connection from '../../../../packages/redis/redis.connection.js'
 class Queue {
-    constructor(name,{maxAttempts=3}={}) {
+    constructor(name, { maxAttempts = 3 } = {}) {
         this.name = name;
         this.connection = connection;
         this.waitingKey = `bullmq:${this.name}:waiting`
@@ -17,8 +17,8 @@ class Queue {
             type: job.type,
             payload: JSON.stringify(job.payload),
             status: 'WAITING',
-            maxAttempts : job.maxAttempts ??  this.maxAttempts,
-            attemptsMade : 0
+            maxAttempts: job.maxAttempts ?? this.maxAttempts,
+            attemptsMade: 0
 
         });
         await this.connection.lpush(this.waitingKey, job.id);

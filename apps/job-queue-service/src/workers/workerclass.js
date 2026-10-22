@@ -1,3 +1,4 @@
+import e from "express";
 import connection from "../../../../packages/redis/redis.connection.js"
 
 class Worker {
@@ -15,20 +16,18 @@ class Worker {
         await this.connection.hset(jobKey, 'status', val);
     }
 
-    async fetchJobFromWaitingQueue() {
-        const jobId = await this.connection.blmove(
+    async moveToActive() {
+        const jobId = await this.connection.brmove(
             this.waitingKey,
             this.activeKey,
-            'LEFT',
             'RIGHT',
+            'LEFT',
             0
         );
         await this.hashQueueChangeStatus(jobId, 'ACTIVE');
         // we need to put in the active queue , right now active queue code is not present in the queue classs...
-        // fetch the job from the hash queue using the jobId.
-        const jobKey = `bullmq:${this.queueName}:job:${jobId}`;
-        const jobInfo = await this.connection.hgetall(jobKey);
-        return { jobInfo, jobId, maxAttempts };
+
+        return { jobId };
     }
 
     async executeJob(jobInfo) {
@@ -45,52 +44,75 @@ class Worker {
         }
         return { msg: 'error' };
     }
+    async getJobInfoFromHash(jobId) {
+        const jobKey = `bullmq:${this.queueName}:job:${jobId}`;
+        const jobInfo = await this.connection.hgetall(jobKey);
+        return { jobInformation: jobInfo, jobId }
+    }
+    async decideFn(response, jobId) {
+        if (response.msg === 'Job execute success') {
+            // move job to complete queue , as right now i don't make the conmplete queue...
+            await this.connection.rpop(this.activeKey);
+            // add in the complete queue...
+            await this.connection.lpush(this.completeKey, jobId);
+            await this.hashQueueChangeStatus(jobId, 'COMPLETED');
+            const jobInformation = await this.connection.hgetall(jobId);
+            jobInformation.attemptsMade = jobInformation.attemptsMade + 1;
+            await this.connection.hset(`bullmq:${this.queueName}:job:${jobId}`, jobInformation);
+        }
+        else {
+            // there we have to managae the retry mechanism...
+            await this.connection.lrem(this.activeKey, 1, jobId);
+            await this.connection.lpush(this.waitingKey, jobId);
+            // await this.hashQueueChangeStatus(jobId, 'FAILED')
+        }
+    }
+    async recoverActiveJobs() {
+        while (true) {
+            let response;
+            // const stalledJobId = await this.connection.rpop(this.activeKey);
+            // if (!stalledJobId) return;
+            // const { jobInformation, jobId } = await this.getJobInfoFromHash(stalledJobId);
+            // if (Number(jobInformation?.attemptsMade) < Number(jobInformation?.maxAttempts) - 1) {
+            //     response = await this.executeJob(jobInformation);
+            //     await this.decideFn(response, jobId);
+            // }
+            // else {
+            //     this.connection.rpop(this.activeKey, 1, jobId);
+            //     this.connection.lpush(this.failedKey, jobId);
+            //     this.hashQueueChangeStatus(jobId, 'FAILED')
+            // }
+            const stalledJobId = await this.connection.lrange(
+                this.activeKey, 0, -1
+            );
+            for (const jobId of stalledJobId) {
+                const { jobInformation } = await this.getJobInfoFromHash(jobId);
 
+            }
+        }
+    }
     async run() {
         console.log(`Worker is running...`);
+        let response;
         while (true) {
             // move the job in the active queue ...
-            const { jobInfo, jobId, maxAttempts, attemptsMade } = await this.fetchJobFromWaitingQueue();
-            // exectue the job..
-            let response;
-            try {
-                if (attemptsMade < maxAttempts) {
-                    response = await this.executeJob(jobInfo);
-                    if (response.msg === 'Job execute success') {
-                // move job to complete queue , as right now i don't make the conmplete queue...
-                await this.connection.lrem(this.activeKey, 1, jobId);
-                // add in the complete queue...
-                await this.connection.lpush(this.completeKey, jobId);
-                await this.hashQueueChangeStatus(jobId, 'COMPLETED')
 
+
+            //recovery code to check the previous active code...
+            await recoverActiveJobs();
+            const { jobId } = await this.moveToActive();
+            const getJobIdFromActiveQueue = await this.connection.lindex(this.activeKey, -1);
+            const { jobInformation } = await this.getJobInfoFromHash(getJobIdFromActiveQueue);
+            if (Number(jobInformation?.attemptsMade) < Number(jobInformation?.maxAttempts) - 1) {
+                response = await this.executeJob(jobInformation);
+                await this.decideFn(response);
             }
             else {
-                // there we have to managae the retry mechanism...
-                await this.connection.lrem(this.activeKey, 1, jobId);
-                await this.connection.lpush(this.waitingKey, jobId);
-                // await this.hashQueueChangeStatus(jobId, 'FAILED')
+                // add the job in the failed queue...
+                this.connection.rpop(this.activeKey, 1, jobId);
+                this.connection.lpush(this.failedKey, jobId);
+                this.hashQueueChangeStatus(jobId, 'FAILED');
             }
-                }
-                else {
-                    // again we have to move the job in the waiting queue...
-                    this.connection.lrem(this.activeKey, 1, jobId);
-                    this.connection.lpush(this.failedKey, jobId);
-                    this.hashQueueChangeStatus(jobId,'FAILED')
-                }
-            } catch (error) {
-                console.log(error.message);
-                
-            }
-            finally{
-                // await this.connection.hset(`bullmq:${this.queueName}:job:${jobId}`,'attemptsMade',)
-              const jobInformation =   await this.connection.hgetall(jobId);
-              jobInformation.attemptsMade = jobInformation.attemptsMade+1;
-              await this.connection.hset(`bullmq:${this.queueName}:job:${jobId}`,jobInformation);
-
-
-            }
-
-            
             // get the job info from the hash queue...
         }
     }
