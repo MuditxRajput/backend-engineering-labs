@@ -10,12 +10,10 @@ class Worker {
         this.completeKey = `bullmq:${this.queueName}:complete`;
         this.failedKey = `bullmq:${this.queueName}:failed`;
     }
-
     async hashQueueChangeStatus(jobId, val) {
         const jobKey = `bullmq:${this.queueName}:job:${jobId}`;
         await this.connection.hset(jobKey, 'status', val);
     }
-
     async moveToActive() {
         const jobId = await this.connection.brmove(
             this.waitingKey,
@@ -29,7 +27,6 @@ class Worker {
 
         return { jobId };
     }
-
     async executeJob(jobInfo) {
         // exectue the job..
         const { type } = jobInfo;
@@ -92,12 +89,10 @@ class Worker {
         }
     }
     async run() {
-        console.log(`Worker is running...`);
+        console.log(`Worker is running... at the seperate process`);
         let response;
         while (true) {
             // move the job in the active queue ...
-
-
             //recovery code to check the previous active code...
             await recoverActiveJobs();
             const { jobId } = await this.moveToActive();
@@ -117,5 +112,4 @@ class Worker {
         }
     }
 }
-
 export default Worker;
