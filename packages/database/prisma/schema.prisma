@@ -96,7 +96,7 @@ model Payment {
   orderId Int 
   customerId Int
   amount Int 
-  currency String @default('INR')
+  currency String @default("INR")
   transactionId Int
   idempotencyKey String @unique
   status         PaymentStatus  @default(PENDING)
@@ -122,7 +122,7 @@ model Transcation{
   errorMessage        String?
   payment             Payment           @relation(fields: [paymentId],references: [id])
   createdAt DateTime 
-  updatedAt @updatedAt
+   updatedAt      DateTime       @updatedAt
   @@unique([paymentId, attemptNumber])
   @@index([paymentId])
 }

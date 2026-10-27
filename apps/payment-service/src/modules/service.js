@@ -7,7 +7,7 @@ export const payment_create_service = async ({ orderId, customerId, amount, curr
             where: { idempotencyKey },
         });
         if (existingPayment) {
-            if (orderId != existingPayment.orderId && customerId != existingPayment.customerId && amount != existingPayment.amount) throw new Error('Duplicate idempotecy key');
+            if (orderId != existingPayment.orderId || customerId != existingPayment.customerId || amount != existingPayment.amount) throw new Error('Duplicate idempotecy key');
             return existingPayment;
         }
         const response = await prisma.$transaction(async (tx) => {
@@ -31,22 +31,18 @@ export const payment_create_service = async ({ orderId, customerId, amount, curr
             })
             return { paymentId: payment.id, transcationId: transcation.id, status: 'PENDING' };
         });
-        return response.msg;
+        return response;
     } catch (error) {
         // throw error;
         // check the error code , if the row is already present .. we get the result from db and return if not then return the error.
-        if (error.code === 'p2002') {
+        if (error.code === 'P2002') {
             // row is already exist...
             const response = await prisma.Payment.findUnique({
                 where: {
                     idempotencyKey
                 },
-                include: {
-                    transcation: true,
-                }
             });
-            // if()
-
+            if(response && response.orderId == orderId && response.idempotencyKey == idempotencyKey) return response;
         }
         throw error;
     }

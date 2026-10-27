@@ -217,13 +217,13 @@ importers:
         version: link:../../packages/database
       bullmq:
         specifier: ^5.81.2
-        version: 5.81.2(supports-color@8.0.0)
+        version: 5.81.2(supports-color@5.5.0)
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
       express:
         specifier: ^5.2.1
-        version: 5.2.1(supports-color@8.0.0)
+        version: 5.2.1(supports-color@5.5.0)
       zod:
         specifier: ^4.4.3
         version: 4.4.3
@@ -237,9 +237,12 @@ importers:
 
   apps/payment-service:
     dependencies:
+      '@backend/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       express:
         specifier: ^5.3.0
-        version: 5.3.0(supports-color@5.5.0)
+        version: 5.3.0(supports-color@8.0.0)
       nodemon:
         specifier: ^3.1.14
         version: 3.1.14
@@ -2890,57 +2893,57 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@azure/arm-containerinstance@9.1.0(supports-color@8.0.0)':
+  '@azure/arm-containerinstance@9.1.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 1.0.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-client': 1.11.0(supports-color@8.0.0)
-      '@azure/core-lro': 2.5.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-client': 1.11.0(supports-color@5.5.0)
+      '@azure/core-lro': 2.5.0(supports-color@5.5.0)
       '@azure/core-paging': 1.7.0
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/core-auth@1.11.0(supports-color@8.0.0)':
+  '@azure/core-auth@1.11.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/core-client@1.11.0(supports-color@8.0.0)':
+  '@azure/core-client@1.11.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/core-http-compat@2.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(@azure/core-rest-pipeline@1.25.0(supports-color@8.0.0))':
+  '@azure/core-http-compat@2.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(@azure/core-rest-pipeline@1.25.0(supports-color@5.5.0))':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-client': 1.11.0(supports-color@8.0.0)
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-client': 1.11.0(supports-color@5.5.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
 
-  '@azure/core-lro@2.2.0(supports-color@8.0.0)':
+  '@azure/core-lro@2.2.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 1.0.0
       '@azure/core-tracing': 1.0.0-preview.13
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/core-lro@2.5.0(supports-color@8.0.0)':
+  '@azure/core-lro@2.5.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 1.0.0
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -2951,14 +2954,14 @@ snapshots:
 
   '@azure/core-process@1.0.0': {}
 
-  '@azure/core-rest-pipeline@1.25.0(supports-color@8.0.0)':
+  '@azure/core-rest-pipeline@1.25.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
-      '@typespec/ts-http-runtime': 0.3.8(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
+      '@typespec/ts-http-runtime': 0.3.8(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -2972,10 +2975,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@azure/core-util@1.14.0(supports-color@8.0.0)':
+  '@azure/core-util@1.14.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@typespec/ts-http-runtime': 0.3.8(supports-color@8.0.0)
+      '@typespec/ts-http-runtime': 0.3.8(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -2985,16 +2988,16 @@ snapshots:
       fast-xml-parser: 5.11.0
       tslib: 2.8.1
 
-  '@azure/identity@4.13.2(supports-color@8.0.0)':
+  '@azure/identity@4.13.2(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-client': 1.11.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-client': 1.11.0(supports-color@5.5.0)
       '@azure/core-process': 1.0.0
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
       '@azure/msal-browser': 5.19.0
       '@azure/msal-node': 5.6.0
       open: 10.1.0
@@ -3002,9 +3005,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/logger@1.4.0(supports-color@8.0.0)':
+  '@azure/logger@1.4.0(supports-color@5.5.0)':
     dependencies:
-      '@typespec/ts-http-runtime': 0.3.8(supports-color@8.0.0)
+      '@typespec/ts-http-runtime': 0.3.8(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -3020,53 +3023,53 @@ snapshots:
       '@azure/msal-common': 16.13.0
       jsonwebtoken: 9.0.3
 
-  '@azure/storage-blob@12.33.0(supports-color@8.0.0)':
+  '@azure/storage-blob@12.33.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-client': 1.11.0(supports-color@8.0.0)
-      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(@azure/core-rest-pipeline@1.25.0(supports-color@8.0.0))
-      '@azure/core-lro': 2.2.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-client': 1.11.0(supports-color@5.5.0)
+      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(@azure/core-rest-pipeline@1.25.0(supports-color@5.5.0))
+      '@azure/core-lro': 2.2.0(supports-color@5.5.0)
       '@azure/core-paging': 1.7.0
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
       '@azure/core-xml': 1.6.0
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
-      '@azure/storage-common': 12.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(supports-color@8.0.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
+      '@azure/storage-common': 12.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(supports-color@5.5.0)
       events: 3.3.0
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
 
-  '@azure/storage-common@12.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(supports-color@8.0.0)':
+  '@azure/storage-common@12.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(@azure/core-rest-pipeline@1.25.0(supports-color@8.0.0))
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(@azure/core-rest-pipeline@1.25.0(supports-color@5.5.0))
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
       events: 3.3.0
       tslib: 2.8.1
     transitivePeerDependencies:
       - '@azure/core-client'
       - supports-color
 
-  '@azure/storage-queue@12.31.0(supports-color@8.0.0)':
+  '@azure/storage-queue@12.31.0(supports-color@5.5.0)':
     dependencies:
       '@azure/abort-controller': 2.2.0
-      '@azure/core-auth': 1.11.0(supports-color@8.0.0)
-      '@azure/core-client': 1.11.0(supports-color@8.0.0)
-      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(@azure/core-rest-pipeline@1.25.0(supports-color@8.0.0))
+      '@azure/core-auth': 1.11.0(supports-color@5.5.0)
+      '@azure/core-client': 1.11.0(supports-color@5.5.0)
+      '@azure/core-http-compat': 2.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(@azure/core-rest-pipeline@1.25.0(supports-color@5.5.0))
       '@azure/core-paging': 1.7.0
-      '@azure/core-rest-pipeline': 1.25.0(supports-color@8.0.0)
+      '@azure/core-rest-pipeline': 1.25.0(supports-color@5.5.0)
       '@azure/core-tracing': 1.4.0
-      '@azure/core-util': 1.14.0(supports-color@8.0.0)
+      '@azure/core-util': 1.14.0(supports-color@5.5.0)
       '@azure/core-xml': 1.6.0
-      '@azure/logger': 1.4.0(supports-color@8.0.0)
-      '@azure/storage-common': 12.5.0(@azure/core-client@1.11.0(supports-color@8.0.0))(supports-color@8.0.0)
+      '@azure/logger': 1.4.0(supports-color@5.5.0)
+      '@azure/storage-common': 12.5.0(@azure/core-client@1.11.0(supports-color@5.5.0))(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -3559,10 +3562,10 @@ snapshots:
 
   '@types/pako@1.0.3': {}
 
-  '@typespec/ts-http-runtime@0.3.8(supports-color@8.0.0)':
+  '@typespec/ts-http-runtime@0.3.8(supports-color@5.5.0)':
     dependencies:
-      http-proxy-agent: 7.0.0(supports-color@8.0.0)
-      https-proxy-agent: 7.0.0(supports-color@8.0.0)
+      http-proxy-agent: 7.0.0(supports-color@5.5.0)
+      https-proxy-agent: 7.0.0(supports-color@5.5.0)
       tslib: 2.8.1
     transitivePeerDependencies:
       - supports-color
@@ -3582,15 +3585,21 @@ snapshots:
 
   acorn@8.18.0: {}
 
+  agent-base@6.0.0(supports-color@5.5.0):
+    dependencies:
+      debug: 4.4.3(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@6.0.0(supports-color@8.0.0):
     dependencies:
       debug: 4.4.3(supports-color@8.0.0)
     transitivePeerDependencies:
       - supports-color
 
-  agent-base@7.1.0(supports-color@8.0.0):
+  agent-base@7.1.0(supports-color@5.5.0):
     dependencies:
-      debug: 4.4.3(supports-color@8.0.0)
+      debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -3654,10 +3663,10 @@ snapshots:
       '@aws-sdk/client-ssm': 3.1116.0
       '@aws-sdk/client-sts': 3.1116.0
       '@aws-sdk/credential-providers': 3.1116.0
-      '@azure/arm-containerinstance': 9.1.0(supports-color@8.0.0)
-      '@azure/identity': 4.13.2(supports-color@8.0.0)
-      '@azure/storage-blob': 12.33.0(supports-color@8.0.0)
-      '@azure/storage-queue': 12.31.0(supports-color@8.0.0)
+      '@azure/arm-containerinstance': 9.1.0(supports-color@5.5.0)
+      '@azure/identity': 4.13.2(supports-color@5.5.0)
+      '@azure/storage-blob': 12.33.0(supports-color@5.5.0)
+      '@azure/storage-queue': 12.31.0(supports-color@5.5.0)
       '@faker-js/faker': 10.5.0
       '@oclif/core': 4.14.0
       '@oclif/plugin-help': 6.2.58
@@ -3715,7 +3724,7 @@ snapshots:
       jsonpath-plus: 10.4.0
       jsonwebtoken: 9.0.3
       lodash: 4.18.1
-      mixpanel: 0.18.0(supports-color@8.0.0)
+      mixpanel: 0.18.0(supports-color@5.5.0)
       moment: 2.30.1
       ms: 2.1.3
       nanoid: 3.3.18
@@ -3812,10 +3821,10 @@ snapshots:
 
   buffer-from@1.1.2: {}
 
-  bullmq@5.81.2(supports-color@8.0.0):
+  bullmq@5.81.2(supports-color@5.5.0):
     dependencies:
       cron-parser: 4.9.0
-      ioredis: 5.11.1(supports-color@8.0.0)
+      ioredis: 5.11.1(supports-color@5.5.0)
       msgpackr: 2.0.4
       node-abort-controller: 3.1.1
       semver: 7.8.5
@@ -4232,6 +4241,39 @@ snapshots:
 
   events@3.3.0: {}
 
+  express@5.2.1(supports-color@5.5.0):
+    dependencies:
+      accepts: 2.0.0
+      body-parser: 2.3.0(supports-color@5.5.0)
+      content-disposition: 1.1.0
+      content-type: 1.0.5
+      cookie: 0.7.1
+      cookie-signature: 1.2.2
+      debug: 4.4.3(supports-color@8.0.0)
+      depd: 2.0.0
+      encodeurl: 2.0.0
+      escape-html: 1.0.3
+      etag: 1.8.1
+      finalhandler: 2.1.1(supports-color@5.5.0)
+      fresh: 2.0.0
+      http-errors: 2.0.1
+      merge-descriptors: 2.0.0
+      mime-types: 3.0.2
+      on-finished: 2.4.1
+      once: 1.4.0
+      parseurl: 1.3.3
+      proxy-addr: 2.0.7
+      qs: 6.15.3
+      range-parser: 1.3.0
+      router: 2.2.0(supports-color@5.5.0)
+      send: 1.2.1(supports-color@5.5.0)
+      serve-static: 2.2.1(supports-color@5.5.0)
+      statuses: 2.0.2
+      type-is: 2.1.0
+      vary: 1.1.2
+    transitivePeerDependencies:
+      - supports-color
+
   express@5.2.1(supports-color@8.0.0):
     dependencies:
       accepts: 2.0.0
@@ -4259,39 +4301,6 @@ snapshots:
       router: 2.2.0(supports-color@8.0.0)
       send: 1.2.1(supports-color@8.0.0)
       serve-static: 2.2.1(supports-color@8.0.0)
-      statuses: 2.0.2
-      type-is: 2.1.0
-      vary: 1.1.2
-    transitivePeerDependencies:
-      - supports-color
-
-  express@5.3.0(supports-color@5.5.0):
-    dependencies:
-      accepts: 2.0.0
-      body-parser: 2.3.0(supports-color@5.5.0)
-      content-disposition: 2.0.1
-      content-type: 2.1.0
-      cookie: 0.7.2
-      cookie-signature: 1.2.2
-      debug: 4.4.3(supports-color@5.5.0)
-      depd: 2.0.0
-      encodeurl: 2.0.0
-      escape-html: 1.0.3
-      etag: 1.8.1
-      finalhandler: 2.1.1(supports-color@5.5.0)
-      fresh: 2.0.0
-      http-errors: 2.0.1
-      merge-descriptors: 2.0.0
-      mime-types: 3.0.2
-      on-finished: 2.4.1
-      once: 1.4.0
-      parseurl: 1.3.3
-      proxy-addr: 2.0.8
-      qs: 6.16.1
-      range-parser: 1.3.0
-      router: 2.2.0(supports-color@5.5.0)
-      send: 1.2.1(supports-color@5.5.0)
-      serve-static: 2.2.1(supports-color@5.5.0)
       statuses: 2.0.2
       type-is: 2.1.0
       vary: 1.1.2
@@ -4522,10 +4531,10 @@ snapshots:
       statuses: 2.0.2
       toidentifier: 1.0.1
 
-  http-proxy-agent@7.0.0(supports-color@8.0.0):
+  http-proxy-agent@7.0.0(supports-color@5.5.0):
     dependencies:
-      agent-base: 7.1.0(supports-color@8.0.0)
-      debug: 4.4.3(supports-color@8.0.0)
+      agent-base: 7.1.0(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -4534,6 +4543,13 @@ snapshots:
       quick-lru: 5.1.1
       resolve-alpn: 1.2.1
 
+  https-proxy-agent@5.0.0(supports-color@5.5.0):
+    dependencies:
+      agent-base: 6.0.0(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@5.5.0)
+    transitivePeerDependencies:
+      - supports-color
+
   https-proxy-agent@5.0.0(supports-color@8.0.0):
     dependencies:
       agent-base: 6.0.0(supports-color@8.0.0)
@@ -4541,10 +4557,10 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  https-proxy-agent@7.0.0(supports-color@8.0.0):
+  https-proxy-agent@7.0.0(supports-color@5.5.0):
     dependencies:
-      agent-base: 7.1.0(supports-color@8.0.0)
-      debug: 4.4.3(supports-color@8.0.0)
+      agent-base: 7.1.0(supports-color@5.5.0)
+      debug: 4.4.3(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -4573,18 +4589,6 @@ snapshots:
       '@ioredis/commands': 1.10.0
       cluster-key-slot: 1.1.1
       debug: 4.4.3(supports-color@5.5.0)
-      denque: 2.1.0
-      redis-errors: 1.2.0
-      redis-parser: 3.0.0
-      standard-as-callback: 2.1.0
-    transitivePeerDependencies:
-      - supports-color
-
-  ioredis@5.11.1(supports-color@8.0.0):
-    dependencies:
-      '@ioredis/commands': 1.10.0
-      cluster-key-slot: 1.1.1
-      debug: 4.4.3(supports-color@8.0.0)
       denque: 2.1.0
       redis-errors: 1.2.0
       redis-parser: 3.0.0
@@ -4763,9 +4767,9 @@ snapshots:
 
   minimist@1.2.8: {}
 
-  mixpanel@0.18.0(supports-color@8.0.0):
+  mixpanel@0.18.0(supports-color@5.5.0):
     dependencies:
-      https-proxy-agent: 5.0.0(supports-color@8.0.0)
+      https-proxy-agent: 5.0.0(supports-color@5.5.0)
     transitivePeerDependencies:
       - supports-color
 
