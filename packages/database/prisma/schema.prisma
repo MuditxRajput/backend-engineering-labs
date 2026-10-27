@@ -81,3 +81,48 @@ model shorturl{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+
+// payment system....
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  SUCCESS
+  FAILED
+}
+
+model Payment {
+  id Int @id @default(autoincrement())
+  orderId Int 
+  customerId Int
+  amount Int 
+  currency String @default('INR')
+  transactionId Int
+  idempotencyKey String @unique
+  status         PaymentStatus  @default(PENDING)
+  transcations Transcation[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  @@unique([orderId])
+  @@index([customerId])
+}
+enum transcationStatus{
+  PENDING
+  PROCESSING
+  COMPLETE
+  FAILED
+}
+model Transcation{
+  id Int @id @default(autoincrement())
+  attemptNumber Int @default(0)
+  paymentId Int
+  gatewayTransactionId String?          @unique
+  status transcationStatus @default(PENDING)
+  errorCode           String?
+  errorMessage        String?
+  payment             Payment           @relation(fields: [paymentId],references: [id])
+  createdAt DateTime 
+  updatedAt @updatedAt
+  @@unique([paymentId, attemptNumber])
+  @@index([paymentId])
+}
